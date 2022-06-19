@@ -12,7 +12,7 @@ export const GamePanel = ({scaleCategory, showNotes, noteOptions, handleOptionCl
 
             <div className="options row">
                 {noteOptions.map(note => (
-                    <span className="col-6 p-1">
+                    <span className="col-6 col-md-2 p-1">
                     <Button
                         onClick={handleOptionClick}
                         disabled={areOptionsDisabled}
