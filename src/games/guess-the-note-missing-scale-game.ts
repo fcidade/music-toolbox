@@ -1,21 +1,15 @@
 import { allNotes, Note } from "@/lib/note"
-import { Scale } from "@/lib/scale"
-import { allScaleCategories, ScaleCategory } from "@/lib/scale-category"
-import { oneOf } from "@/utils"
-
-export enum GameState {
-    Playing,
-    Success,
-    Fail
-}
+import { getRandomScale, Scale } from "@/lib/scale"
+import {  ScaleCategory } from "@/lib/scale-category"
+import { GameState } from "./common"
 
 export class GuessTheNoteMissingScaleGame {
-    observers: ((presenter: GuessTheNoteMissingScaleGame.Presenter) => void)[] = []
     state: GameState
     scale: Scale
     indexOfTheNoteToBeHidden: number
     guessedRight: number = 0
     guessedWrong: number = 0
+    observers: GuessTheNoteMissingScaleGame.ObserverFn[] = []
 
     constructor(private config: GuessTheNoteMissingScaleGame.Config = {}) {
         this.newRound()
@@ -27,16 +21,6 @@ export class GuessTheNoteMissingScaleGame {
         this.notifyObservers()
     }
 
-    notifyObservers() {
-        this.observers.forEach(fn => fn(
-            this.present()
-        ))
-    }
-
-    addObserver(fn: (presenter: GuessTheNoteMissingScaleGame.Presenter) => void) {
-        this.observers.push(fn)
-    }
-
     newRound() {
         this.scale = this.getRandomScale()
 
@@ -45,21 +29,14 @@ export class GuessTheNoteMissingScaleGame {
         this.notifyObservers()
     }
 
-    getRandomScale() {
+    private getRandomScale() {
         const { allowedScaleCategories, allowedNotes } = this.config
-        const notes = allNotes()
-            .filter(note => allowedNotes ? allowedNotes.includes(note) : true)
-        const scaleCategories = allScaleCategories()
-            .filter(category => allowedScaleCategories ? allowedScaleCategories.includes(category) : true)
-            
-        const randomRoot = oneOf(notes)
-        const randomScaleCategory = oneOf(scaleCategories)
-        return new Scale(randomRoot, randomScaleCategory)
+        return getRandomScale(allowedScaleCategories, allowedNotes)
     }
 
     validateInput(input: Note) {
-        const note = this.scale.getNotes()[this.indexOfTheNoteToBeHidden]
-        if ((input === note)) {
+        const note = this.scale.getNote(this.indexOfTheNoteToBeHidden)
+        if (input === note) {
             this.state = GameState.Success
             this.guessedRight++
         } else {
@@ -70,19 +47,31 @@ export class GuessTheNoteMissingScaleGame {
     }
 
     present(): GuessTheNoteMissingScaleGame.Presenter {
-        const showNotes = this.scale.getNotes().map(n => String(n))
-        const hiddenNote = showNotes[this.indexOfTheNoteToBeHidden]
-        showNotes[this.indexOfTheNoteToBeHidden] = "_"
-        const noteOptions = allNotes()
+        const notesDisplayed = this.scale.getNotes().map(n => String(n))
+        const hiddenNote = notesDisplayed[this.indexOfTheNoteToBeHidden]
+        notesDisplayed[this.indexOfTheNoteToBeHidden] = "_"
+        const avaliableAnswerOptions = allNotes()
         return {
             state: this.state,
-            noteOptions,
+            avaliableAnswerOptions,
             scale: this.scale,
-            showNotes,
+            notesDisplayed,
             hiddenNote,
             guessedRight: this.guessedRight,
             guessedWrong: this.guessedWrong,
         }
+    }
+
+    // Observers
+
+    addObserver(fn: (presenter: GuessTheNoteMissingScaleGame.Presenter) => void) {
+        this.observers.push(fn)
+    }
+
+    private notifyObservers() {
+        this.observers.forEach(fn => fn(
+            this.present()
+        ))
     }
 }
 
@@ -95,11 +84,13 @@ export namespace GuessTheNoteMissingScaleGame {
 
     export type Presenter = {
         state: GameState
-        noteOptions: string[]
+        avaliableAnswerOptions: string[]
         scale: Scale
-        showNotes: string[]
+        notesDisplayed: string[]
         hiddenNote: string
         guessedRight: number
         guessedWrong: number
     }
+
+    export type ObserverFn = ((presenter: GuessTheNoteMissingScaleGame.Presenter) => void)
 }

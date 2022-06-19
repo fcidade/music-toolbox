@@ -1,5 +1,6 @@
+import { oneOf } from "@/utils";
 import { Note, allNotes } from "./note";
-import { ScaleCategory, getFormula } from "./scale-category";
+import { ScaleCategory, getFormula, allScaleCategories } from "./scale-category";
 
 export class Scale {
     constructor(
@@ -23,4 +24,19 @@ export class Scale {
         
         return slicedArray.filter((_, index) => indexes.includes(index));
     }
+
+    getNote(index: number): Note {
+        return this.getNotes()[index]
+    }
+}
+
+export const getRandomScale = (allowedScaleCategories: ScaleCategory[], allowedNotes: Note[]): Scale => {
+    const notes = allNotes()
+        .filter(note => allowedNotes ? allowedNotes.includes(note) : true)
+    const scaleCategories = allScaleCategories()
+        .filter(category => allowedScaleCategories ? allowedScaleCategories.includes(category) : true)
+        
+    const randomRoot = oneOf(notes)
+    const randomScaleCategory = oneOf(scaleCategories)
+    return new Scale(randomRoot, randomScaleCategory)
 }

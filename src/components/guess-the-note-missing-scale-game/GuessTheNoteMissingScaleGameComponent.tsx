@@ -1,60 +1,24 @@
 import React, { useEffect, useState } from "react"
 import { allNotes, Note } from "@/lib/note"
-import { GuessTheNoteMissingScaleGame, GameState } from "@/games/guess-the-note-missing-scale-game"
+import { GuessTheNoteMissingScaleGame } from "@/games/guess-the-note-missing-scale-game"
+import { GameState } from "@/games/common"
 import { allScaleCategories, ScaleCategory } from "@/lib/scale-category"
-import { Button, Hide, Section, Show } from "../common"
-
-export const GamePanel = ({scaleCategory, showNotes, noteOptions, handleOptionClick, areOptionsDisabled, isPlaying, handleTryAgain, isSuccess, isFailure, guessedRight, guessedWrong}) => {
-    return (
-        <div className="container-fluid p-0">
-            <h1 className="nes-text is-primary">{showNotes}</h1>
-            <h3>Scale type: {scaleCategory}</h3>
-
-            <div className="options row">
-                {noteOptions.map(note => (
-                    <span className="col-6 col-md-2 p-1">
-                    <Button
-                        onClick={handleOptionClick}
-                        disabled={areOptionsDisabled}
-                        text={note}
-                    />
-                    </span>
-                ))}
-            </div>
-            <hr />
-            <div className="row">
-                <Hide when={isPlaying}>
-                    <Button
-                        onClick={handleTryAgain}
-                        text="Try again"
-                        disabled={false}
-                    // REMOVE IT 
-                    />
-                    <hr />
-                </Hide>
-                <Show when={isSuccess}><span className="fs-2 badge bg-success full-width">Right!</span></Show>
-                <Show when={isFailure}><span className="fs-2 badge bg-danger full-width">Wrong!</span></Show>
-            </div>
-            <hr />
-            <span>Guessed right: {guessedRight} </span> <br/>
-            <span>Guessed wrong: {guessedWrong}</span> <br/>
-            <span>You guessed: {guessedRight + guessedWrong}</span> <br/>
-        </div>
-    )
-}
+import { Section } from "../common"
+import { GameConfiguration } from "./components/GameConfiguration"
+import { GamePanel } from "./components/GamePanel"
 
 export const GuessTheNoteMissingScaleGameComponent = () => {
 
     const [game] = useState(new GuessTheNoteMissingScaleGame())
     const [gamePresentation, setGamePresentation] = useState(game.present())
     const [allowedNotesCheckboxes, setAllowedNotes] = useState(allNotes().reduce((prev, curr) => ({ ...prev, [curr]: true }), {}))
-    const [allowedScaleCategoriesCheckboxes, setAllowedScaleCategories] = useState({[ScaleCategory.Major]: true})
+    const [allowedScaleCategoriesCheckboxes, setAllowedScaleCategories] = useState({ [ScaleCategory.Major]: true })
 
     const {
         state,
-        noteOptions,
+        avaliableAnswerOptions,
         scale,
-        showNotes,
+        notesDisplayed,
         guessedRight,
         guessedWrong
     } = gamePresentation
@@ -62,8 +26,7 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
 
     useEffect(() => {
         game.addObserver(presenter => setGamePresentation(presenter))
-        // game.addObserver(console.log)
-    })
+    }, [])
 
     const handleOptionClick = (e) => {
         const note = e.target.innerText as Note
@@ -91,53 +54,42 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
         })
     }, [allowedNotesCheckboxes, allowedScaleCategoriesCheckboxes])
 
-    const isPlaying = state === GameState.Playing
-    const areOptionsDisabled = state !== GameState.Playing
-    const isSuccess = state === GameState.Success
-    const isFailure = state === GameState.Fail
-    const scaleCategory = scale.getCategory()
+    const isNoteAlreadyChecked = (note: Note) => {
+        return allowedNotesCheckboxes[note]
+    }
+
+    const isScaleCategoryAlreadyChecked = (category: ScaleCategory) => {
+        return allowedScaleCategoriesCheckboxes[category]
+    }
+
+    const avaliableRootNotes = allNotes()
+    const avaliableScaleCategories = allScaleCategories()
 
     return (
         <div>
             <Section title="Guess The Note Missing In The Scale">
-                <GamePanel {...{scaleCategory, showNotes: showNotes.join(' '), noteOptions, handleOptionClick, areOptionsDisabled, isPlaying, handleTryAgain, isSuccess, isFailure, guessedRight, guessedWrong}}/>
+                <GamePanel 
+                    scaleCategory={scale.getCategory()}
+                    notesDisplayed={notesDisplayed.join(' ')}
+                    avaliableAnswerOptions={avaliableAnswerOptions}
+                    handleOptionClick={handleOptionClick}
+                    isPlaying={state === GameState.Playing}
+                    handleTryAgain={handleTryAgain}
+                    isSuccess={state === GameState.Success}
+                    isFailure={state === GameState.Fail}
+                    guessedRight={guessedRight}
+                    guessedWrong={guessedWrong}
+                />
             </Section>
             <Section title="Configuration">
-                <div>
-                    <span className="">Scales:</span> <br />
-                    {
-                        allNotes().map(note => (
-                            <div className="form-check form-check-inline">
-                                <input className="form-check-input"
-                                    type="checkbox"
-                                    id={`checkbox-${note}`}
-                                    value={note}
-                                    checked={allowedNotesCheckboxes[note]}
-                                    onChange={handleAllowedNotesChecked}
-                                />
-                                <label className="form-check-label" htmlFor={`checkbox-${note}`} > {note}</label>
-                            </div>
-                        ))
-                    }
-                </div>
-                <div>
-
-                    <span className="">Scale Categories:</span> <br />
-                    {
-                        allScaleCategories().map(category => (
-                            <div className="form-check form-check-inline">
-                                <input className="form-check-input"
-                                    type="checkbox"
-                                    id={`checkbox-${category}`}
-                                    value={category}
-                                    checked={allowedScaleCategoriesCheckboxes[category]}
-                                    onChange={handleAllowedScaleCategoriesChecked}
-                                />
-                                <label className="form-check-label" htmlFor={`checkbox-${category}`} > {category}</label>
-                            </div>
-                        ))
-                    }
-                </div>
+                <GameConfiguration
+                    avaliableRootNotes={avaliableRootNotes}
+                    avaliableScaleCategories={avaliableScaleCategories}
+                    handleAllowedNotesChecked={handleAllowedNotesChecked}
+                    handleAllowedScaleCategoriesChecked={handleAllowedScaleCategoriesChecked}
+                    isNoteAlreadyChecked={isNoteAlreadyChecked}
+                    isScaleCategoryAlreadyChecked={isScaleCategoryAlreadyChecked}
+                />
             </Section>
         </div>
     )
