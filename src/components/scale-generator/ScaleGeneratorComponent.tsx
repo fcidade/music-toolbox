@@ -1,31 +1,31 @@
 import { Scale } from "@/lib/scale"
-import { allScaleCategories, ScaleCategory } from "@/lib/scale-category"
+import { ScaleCategory } from "@/lib/scale-category"
 import React, { useEffect, useState } from "react"
-import {  Note } from "../../lib/note"
+import { Note } from "../../lib/note"
 import { Section, Select, SelectOption } from "../common"
 
 export const ScaleGeneratorComponent = () => {
 
-    const [rootNote, setRootNote] = useState(Note.A)
+    const [rootNote, setRootNote] = useState(Note.A.note)
     const [scaleCategory, setScaleCategory] = useState(ScaleCategory.Major)
-    const [scale, setScale] = useState(new Scale(rootNote, scaleCategory))
+    const [scale, setScale] = useState(new Scale(new Note(rootNote), scaleCategory))
 
     useEffect(() => {
-        setScale(new Scale(rootNote, scaleCategory))
+        setScale(new Scale(new Note(rootNote), scaleCategory))
     }, [rootNote, scaleCategory])
 
-    const handleSetRootNote = (e) => setRootNote(new Note(e.target.value))
+    const handleSetRootNote = (e) => setRootNote(e.target.value)
     const handleSetScaleCategory = (e) => setScaleCategory(e.target.value)
 
     const notes = Note.allNotes()
-    const scaleCategories = allScaleCategories()
+    const scaleCategories = ScaleCategory.allScaleCategories()
 
     return <Section title="Scale Generator">
         <span className="fs-3 text-primary">{scale.displayNotes().join(' ')}</span>
         <div className="row">
             <span className="fs-5">Select scale root</span>
             <Select value={rootNote} onChange={handleSetRootNote}>
-                {notes.map(({note}) => (
+                {notes.map(({ note }) => (
                     <SelectOption value={note}>{note}</SelectOption>
                 ))}
             </Select>

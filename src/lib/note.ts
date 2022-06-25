@@ -4,10 +4,10 @@ export class Note {
     constructor(public note: string) { }
 
     getRelative(interval: Interval): Note {
-        const notes = Note.allNotes()
-        const indexOfCurrentNote = notes.indexOf(this)
+        const notes = Note.allNotes().map(({note}) => note)
+        const indexOfCurrentNote = notes.indexOf(this.note)
         const relativeNote = notes[(indexOfCurrentNote + interval) % notes.length]
-        return relativeNote
+        return new Note(relativeNote)
     }
 
     isAccident(): boolean {

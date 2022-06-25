@@ -1,6 +1,6 @@
 import { Note } from "@/lib/note"
-import { getRandomScale, Scale } from "@/lib/scale"
-import {  ScaleCategory } from "@/lib/scale-category"
+import { Scale } from "@/lib/scale"
+import { ScaleCategory } from "@/lib/scale-category"
 import { GameState } from "./common"
 
 export class GuessTheNoteMissingScaleGame {
@@ -23,17 +23,15 @@ export class GuessTheNoteMissingScaleGame {
 
     newRound() {
         this.scale = this.getRandomScale()
-
         this.state = GameState.Playing
-        console.log({scale: this.scale.getNotes()});
-        
+
         this.indexOfTheNoteToBeHidden = Math.floor(Math.random() * this.scale.getNotes().length)
         this.notifyObservers()
     }
 
     private getRandomScale(): Scale {
         const { allowedScaleCategories, allowedNotes } = this.config
-        return getRandomScale(allowedScaleCategories, allowedNotes)
+        return Scale.getRandomScaleCustom(allowedScaleCategories, allowedNotes)
     }
 
     validateInput(input: Note) {

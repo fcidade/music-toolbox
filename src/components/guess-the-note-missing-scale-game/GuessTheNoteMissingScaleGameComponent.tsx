@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Note } from "@/lib/note"
 import { GuessTheNoteMissingScaleGame } from "@/games/guess-the-note-missing-scale-game"
 import { GameState } from "@/games/common"
-import { allScaleCategories, ScaleCategory } from "@/lib/scale-category"
+import { ScaleCategory } from "@/lib/scale-category"
 import { Section } from "../common"
 import { GameConfiguration, GamePanel } from "./components"
 export const GuessTheNoteMissingScaleGameComponent = () => {
@@ -61,7 +61,7 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
     }
 
     const avaliableRootNotes = Note.allNotes()
-    const avaliableScaleCategories = allScaleCategories()
+    const avaliableScaleCategories = ScaleCategory.allScaleCategories()
 
     return (
         <div>

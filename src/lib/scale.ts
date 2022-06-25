@@ -1,5 +1,4 @@
 import { oneOf } from "@/utils";
-import { Interval } from "./interval";
 import { Note } from "./note";
 import { ScaleCategory } from "./scale-category";
 
@@ -37,7 +36,8 @@ export class Scale {
     }
 
     displayNotesWithFlats(): string[] {
-        return this.getNotes().map(note => note.isAccident() ? note.asFlat() : note.display());
+        const notes = this.getNotes()
+        return notes.map(note => note.isAccident() ? note.asFlat() : note.display());
     }
 }
 
