@@ -1,1 +1,1 @@
-export * from './ScaleGenerator'
+export * from './ScaleGeneratorComponent'

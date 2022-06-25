@@ -9,8 +9,8 @@ export const GameConfiguration = ({ avaliableRootNotes, avaliableScaleCategories
                 <span>Scales:</span> <br />
                 {avaliableRootNotes.map(note => (
                     <Checkbox
-                        label={note}
-                        value={note}
+                        label={note.note}
+                        value={note.note}
                         onChange={handleAllowedNotesChecked}
                         checked={isNoteAlreadyChecked(note)} />
                 ))}

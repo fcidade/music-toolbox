@@ -1,5 +1,5 @@
 import { MetronomePedal } from "@/components/metronome"
-import { ScaleGeneratorPedal } from "@/components/scale-generator"
+import { ScaleGeneratorComponent } from "@/components/scale-generator"
 import React from "react"
 
 export const MetronomePage = () => {
@@ -11,7 +11,7 @@ export const MetronomePage = () => {
         <div>
             <MetronomePedal/>
             <hr />
-            <ScaleGeneratorPedal/>
+            <ScaleGeneratorComponent/>
         </div>
     </div>)
 }

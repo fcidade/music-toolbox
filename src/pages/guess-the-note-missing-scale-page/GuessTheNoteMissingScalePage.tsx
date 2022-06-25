@@ -1,7 +1,11 @@
 import { GuessTheNoteMissingScaleGameComponent } from "@/components/guess-the-note-missing-scale-game"
+import { ScaleGeneratorComponent } from "@/components/scale-generator"
 import React from "react"
 
 export const GuessTheNoteMissingScalePage = () => {
+
+
+
     return (
         <div className="container">
             <aside className="pt-2">
@@ -10,7 +14,13 @@ export const GuessTheNoteMissingScalePage = () => {
                 </span>
             </aside>
             <hr />
-            <GuessTheNoteMissingScaleGameComponent />
+            {/* <GuessTheNoteMissingScaleGameComponent /> */}
+            <hr/>
+            <ScaleGeneratorComponent/>
+
+            {/* TODO: 
+                - Add some king of aside with a checkbox to witch "pedals" you want in the screen?
+            */}
         </div >
     )
 }

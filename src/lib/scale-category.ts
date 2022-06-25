@@ -9,68 +9,78 @@ export enum ScaleCategory {
     PentatonicMinor = 'Pentatonic Minor'
 }
 
-export const allScaleCategories = (): ScaleCategory[] => {
-    return Object.values(ScaleCategory)
-}
+export namespace ScaleCategory {
 
-export const getFormula = (scale: ScaleCategory): Interval[] => {
-    switch (scale) {
-        case ScaleCategory.Major:
-            return [
-                Interval.Root,
-                Interval.MajorSecond,
-                Interval.MajorSecond,
-                Interval.MinorSecond,
-                Interval.MajorSecond,
-                Interval.MajorSecond,
-                Interval.MajorSecond,
-            ];
-        case ScaleCategory.Minor:
-            return [
-                Interval.Root,
-                Interval.MajorSecond,
-                Interval.MinorSecond,
-                Interval.MajorSecond,
-                Interval.MajorSecond,
-                Interval.MinorSecond,
-                Interval.MajorSecond,
-            ];
+    export const allScaleCategories = (): ScaleCategory[] => {
+        return [
+            ScaleCategory.Major,
+            ScaleCategory.Minor,
+            ScaleCategory.HarmonicMinor,
+            ScaleCategory.MelodicMinor,
+            ScaleCategory.PentatonicMajor,
+            ScaleCategory.PentatonicMinor,
+        ]
+    }
+
+    export const getFormula = (scaleCategory: ScaleCategory): Interval[] => {
+        switch (scaleCategory) {
+            case ScaleCategory.Major:
+                return [
+                    Interval.Root,
+                    Interval.MajorSecond,
+                    Interval.MajorThird,
+                    Interval.PerfectForth,
+                    Interval.PerfectFifth,
+                    Interval.Sixth,
+                    Interval.MajorSeventh,
+                ]
+            case ScaleCategory.Minor:
+                return [
+                    Interval.Root,
+                    Interval.MajorSecond,
+                    Interval.MinorThird,
+                    Interval.PerfectForth,
+                    Interval.PerfectFifth,
+                    Interval.AugmentedFifth,
+                    Interval.MinorSeventh,
+                ]
             case ScaleCategory.PentatonicMajor:
                 return [
                     Interval.Root,
                     Interval.MajorSecond,
-                    Interval.MajorSecond,
+                    Interval.MajorThird,
+                    Interval.PerfectFifth,
+                    Interval.Sixth,
+                ]
+            case ScaleCategory.PentatonicMinor:
+                return [
+                    Interval.Root,
                     Interval.MinorThird,
-                    Interval.MajorSecond,
-                ];
-        case ScaleCategory.PentatonicMinor:
-            return [
-                Interval.Root,
-                Interval.MinorThird,
-                Interval.MajorSecond,
-                Interval.MajorSecond,
-                Interval.MinorThird,
-            ];
+                    Interval.PerfectForth,
+                    Interval.PerfectFifth,
+                    Interval.MinorSeventh,
+                ]
             case ScaleCategory.HarmonicMinor:
                 return [
                     Interval.Root,
                     Interval.MajorSecond,
-                    Interval.MinorSecond,
-                    Interval.MajorSecond,
-                    Interval.MajorSecond,
-                    Interval.MinorSecond,
                     Interval.MinorThird,
-                ];
-                case ScaleCategory.MelodicMinor:
-                    return [
-                        Interval.Root,
-                        Interval.MajorSecond,
-                        Interval.MinorSecond,
-                        Interval.MajorSecond,
-                        Interval.MajorSecond,
-                        Interval.MajorSecond,
-                        Interval.MajorSecond,
-                    ];
+                    Interval.PerfectForth,
+                    Interval.PerfectFifth,
+                    Interval.AugmentedFifth,
+                    Interval.MajorSeventh,
+                ]
+            case ScaleCategory.MelodicMinor:
+                return [
+                    Interval.Root,
+                    Interval.MajorSecond,
+                    Interval.MinorThird,
+                    Interval.PerfectForth,
+                    Interval.PerfectFifth,
+                    Interval.Sixth,
+                    Interval.MajorSeventh,
+                ]
+        }
     }
-    return [Interval.Root];
-};
+
+}

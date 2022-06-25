@@ -1,6 +1,7 @@
 import { oneOf } from "@/utils";
-import { Note, allNotes } from "./note";
-import { ScaleCategory, getFormula, allScaleCategories } from "./scale-category";
+import { Interval } from "./interval";
+import { Note } from "./note";
+import { ScaleCategory } from "./scale-category";
 
 export class Scale {
     constructor(
@@ -11,32 +12,71 @@ export class Scale {
     getRoot(): Note { return this.root; }
     getCategory(): ScaleCategory { return this.category; }
     getNotes(): Note[] {
-        const noteArray = allNotes()
+        const formula = ScaleCategory.getFormula(this.getCategory())
+        return formula.map(interval => this.root.getRelative(interval))
+    }
 
-        const slicedArray = [...noteArray, ...noteArray].slice(noteArray.indexOf(this.root));
-        const formula = getFormula(this.category);
-
-        const indexes = formula.reduce((prev, curr, index) => {
-            const lastValue = index === 0 ? 0 : prev[index - 1];
-            const value = lastValue + curr;
-            return [...prev, value];
-        }, []);
-        
-        return slicedArray.filter((_, index) => indexes.includes(index));
+    getNotesAsStrings(): string[] {
+        return this.getNotes().map(({ note }) => note)
     }
 
     getNote(index: number): Note {
         return this.getNotes()[index]
     }
+
+    displayNotes(): string[] {
+        const shouldBeSharps = [Note.C, Note.G, Note.D, Note.A, Note.E, Note.B, Note.Gb]
+        if (shouldBeSharps.includes(this.root)) {
+            return this.displayNotesWithSharps()
+        }
+        return this.displayNotesWithFlats()
+    }
+
+    displayNotesWithSharps(): string[] {
+        return this.getNotes().map(note => note.isAccident() ? note.asSharp() : note.display());
+    }
+
+    displayNotesWithFlats(): string[] {
+        return this.getNotes().map(note => note.isAccident() ? note.asFlat() : note.display());
+    }
 }
 
-export const getRandomScale = (allowedScaleCategories: ScaleCategory[], allowedNotes: Note[]): Scale => {
-    const notes = allNotes()
-        .filter(note => allowedNotes ? allowedNotes.includes(note) : true)
-    const scaleCategories = allScaleCategories()
-        .filter(category => allowedScaleCategories ? allowedScaleCategories.includes(category) : true)
-        
-    const randomRoot = oneOf(notes)
-    const randomScaleCategory = oneOf(scaleCategories)
-    return new Scale(randomRoot, randomScaleCategory)
+export namespace Scale {
+
+    export const getRandomScaleCustom = (allowedScaleCategories: ScaleCategory[], allowedNotes: Note[]): Scale => {
+        const notes = Note.allNotes()
+            .filter(note => allowedNotes ? allowedNotes.includes(note) : true)
+        const scaleCategories = ScaleCategory.allScaleCategories()
+            .filter(category => allowedScaleCategories ? allowedScaleCategories.includes(category) : true)
+
+        const randomRoot = oneOf(notes)
+        const randomScaleCategory = oneOf(scaleCategories)
+        return new Scale(randomRoot, randomScaleCategory)
+    }
+
+    export const major = (note: Note): Scale => {
+        return new Scale(note, ScaleCategory.Major)
+    }
+
+    export const minor = (note: Note): Scale => {
+        return new Scale(note, ScaleCategory.Minor)
+    }
+
+    export const pentatonicMajor = (note: Note): Scale => {
+        return new Scale(note, ScaleCategory.PentatonicMajor)
+    }
+
+    export const pentatonicMinor = (note: Note): Scale => {
+        return new Scale(note, ScaleCategory.PentatonicMinor)
+    }
+
+    export const harmonicMinor = (note: Note): Scale => {
+        return new Scale(note, ScaleCategory.HarmonicMinor)
+    }
+
+    export const melodicMinor = (note: Note): Scale => {
+        return new Scale(note, ScaleCategory.MelodicMinor)
+    }
+    
+    
 }

@@ -10,7 +10,7 @@ export const AnswerOptions = ({ avaliableAnswerOptions, handleOptionClick, isPla
                     <Button
                         onClick={handleOptionClick}
                         disabled={!isPlaying}
-                        text={note}
+                        text={note.note}
                         fullWidth />
                 </span>
             ))}

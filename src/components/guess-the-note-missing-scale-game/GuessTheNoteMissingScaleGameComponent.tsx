@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react"
-import { allNotes, Note } from "@/lib/note"
+import { Note } from "@/lib/note"
 import { GuessTheNoteMissingScaleGame } from "@/games/guess-the-note-missing-scale-game"
 import { GameState } from "@/games/common"
 import { allScaleCategories, ScaleCategory } from "@/lib/scale-category"
 import { Section } from "../common"
-import { GameConfiguration } from "./components/GameConfiguration"
-import { GamePanel } from "./components/GamePanel"
-
+import { GameConfiguration, GamePanel } from "./components"
 export const GuessTheNoteMissingScaleGameComponent = () => {
 
     const [game] = useState(new GuessTheNoteMissingScaleGame())
     const [gamePresentation, setGamePresentation] = useState(game.present())
-    const [allowedNotesCheckboxes, setAllowedNotes] = useState(allNotes().reduce((prev, curr) => ({ ...prev, [curr]: true }), {}))
+    const [allowedNotesCheckboxes, setAllowedNotes] = useState(Note.allNotes().map(({ note }) => note).reduce((prev, curr) => ({ ...prev, [curr]: true }), {}))
     const [allowedScaleCategoriesCheckboxes, setAllowedScaleCategories] = useState({ [ScaleCategory.Major]: true })
 
     const {
@@ -46,7 +44,7 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
     }
 
     useEffect(() => {
-        const allowedNotes = Object.keys(allowedNotesCheckboxes).filter((v) => allowedNotesCheckboxes[v]) as Note[]
+        const allowedNotes = Object.keys(allowedNotesCheckboxes).filter((v) => allowedNotesCheckboxes[v]).map(note => new Note(note))
         const allowedScaleCategories = Object.keys(allowedScaleCategoriesCheckboxes).filter((v) => allowedScaleCategoriesCheckboxes[v]) as ScaleCategory[]
         game.setConfig({
             allowedNotes,
@@ -54,7 +52,7 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
         })
     }, [allowedNotesCheckboxes, allowedScaleCategoriesCheckboxes])
 
-    const isNoteAlreadyChecked = (note: Note) => {
+    const isNoteAlreadyChecked = ({ note }: Note) => {
         return allowedNotesCheckboxes[note]
     }
 
@@ -62,13 +60,13 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
         return allowedScaleCategoriesCheckboxes[category]
     }
 
-    const avaliableRootNotes = allNotes()
+    const avaliableRootNotes = Note.allNotes()
     const avaliableScaleCategories = allScaleCategories()
 
     return (
         <div>
             <Section title="Guess The Note Missing In The Scale">
-                <GamePanel 
+                <GamePanel
                     scaleCategory={scale.getCategory()}
                     notesDisplayed={notesDisplayed.join(' ')}
                     avaliableAnswerOptions={avaliableAnswerOptions}
@@ -94,8 +92,3 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
         </div>
     )
 }
-
-// TODO: 
-//  - Flats or sharps, not both
-//  - Not let users choose no scale or just put a message bellow
-//  - Save preferences on local storage

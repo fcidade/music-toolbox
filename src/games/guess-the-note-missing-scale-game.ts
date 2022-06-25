@@ -1,4 +1,4 @@
-import { allNotes, Note } from "@/lib/note"
+import { Note } from "@/lib/note"
 import { getRandomScale, Scale } from "@/lib/scale"
 import {  ScaleCategory } from "@/lib/scale-category"
 import { GameState } from "./common"
@@ -25,11 +25,13 @@ export class GuessTheNoteMissingScaleGame {
         this.scale = this.getRandomScale()
 
         this.state = GameState.Playing
+        console.log({scale: this.scale.getNotes()});
+        
         this.indexOfTheNoteToBeHidden = Math.floor(Math.random() * this.scale.getNotes().length)
         this.notifyObservers()
     }
 
-    private getRandomScale() {
+    private getRandomScale(): Scale {
         const { allowedScaleCategories, allowedNotes } = this.config
         return getRandomScale(allowedScaleCategories, allowedNotes)
     }
@@ -47,10 +49,10 @@ export class GuessTheNoteMissingScaleGame {
     }
 
     present(): GuessTheNoteMissingScaleGame.Presenter {
-        const notesDisplayed = this.scale.getNotes().map(n => String(n))
-        const hiddenNote = notesDisplayed[this.indexOfTheNoteToBeHidden]
+        const notesDisplayed = this.scale.getNotesAsStrings()
+        const hiddenNote = new Note(notesDisplayed[this.indexOfTheNoteToBeHidden])
         notesDisplayed[this.indexOfTheNoteToBeHidden] = "_"
-        const avaliableAnswerOptions = allNotes()
+        const avaliableAnswerOptions = Note.allNotes()
         return {
             state: this.state,
             avaliableAnswerOptions,
@@ -84,10 +86,10 @@ export namespace GuessTheNoteMissingScaleGame {
 
     export type Presenter = {
         state: GameState
-        avaliableAnswerOptions: string[]
+        avaliableAnswerOptions: Note[]
         scale: Scale
         notesDisplayed: string[]
-        hiddenNote: string
+        hiddenNote: Note
         guessedRight: number
         guessedWrong: number
     }
