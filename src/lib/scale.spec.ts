@@ -4,6 +4,14 @@ import { ScaleCategory } from "./scale-category"
 
 describe('Scale', () => {
 
+    beforeEach(() => {
+        jest.spyOn(global.Math, 'random').mockReturnValue(.2);
+    });
+
+    afterEach(() => {
+        jest.spyOn(global.Math, 'random').mockRestore();
+    })
+
     test('should return the right scale root', () => {
         expect(Scale.major(new Note('C')).getRoot()).toEqual(Note.C)
         expect(Scale.minor(new Note('D')).getRoot()).toEqual(Note.D)
@@ -109,22 +117,37 @@ describe('Scale', () => {
     test('should display scales with the right accidents', () => {
 
         // Major
-        expect(Scale.major(Note.C).displayNotes()).toEqual(["C", "D", "E", "F", "G", "A", "B"])
-        expect(Scale.major(Note.G).displayNotes()).toEqual(["G", "A", "B", "C", "D", "E", "F#"])
-        expect(Scale.major(Note.D).displayNotes()).toEqual(["D", "E", "F#", "G", "A", "B", "C#"])
-        expect(Scale.major(Note.A).displayNotes()).toEqual(["A", "B", "C#", "D", "E", "F#", "G#"])
-        expect(Scale.major(Note.E).displayNotes()).toEqual(["E", "F#", "G#", "A", "B", "C#", "D#"])
-        expect(Scale.major(Note.B).displayNotes()).toEqual(["B", "C#", "D#", "E", "F#", "G#", "A#"])
-        expect(Scale.major(Note.Gb).displayNotes()).toEqual(["F#", "G#", "A#", "B", "C#", "D#", "F"])
-        expect(Scale.major(Note.Db).displayNotes()).toEqual(["Db", "Eb", "F", "Gb", "Ab", "Bb", "C"])
-        expect(Scale.major(Note.Ab).displayNotes()).toEqual(["Ab", "Bb", "C", "Db", "Eb", "F", "G"])
-        expect(Scale.major(Note.Eb).displayNotes()).toEqual(["Eb", "F", "G", "Ab", "Bb", "C", "D"])
-        expect(Scale.major(Note.Bb).displayNotes()).toEqual(["Bb", "C", "D", "Eb", "F", "G", "A"])
-        expect(Scale.major(Note.F).displayNotes()).toEqual(["F", "G", "A", "Bb", "C", "D", "E"])
+        expect(Scale.major(new Note('C')).displayNotes()).toEqual(["C", "D", "E", "F", "G", "A", "B"])
+        expect(Scale.major(new Note('G')).displayNotes()).toEqual(["G", "A", "B", "C", "D", "E", "F#"])
+        expect(Scale.major(new Note('D')).displayNotes()).toEqual(["D", "E", "F#", "G", "A", "B", "C#"])
+        expect(Scale.major(new Note('A')).displayNotes()).toEqual(["A", "B", "C#", "D", "E", "F#", "G#"])
+        expect(Scale.major(new Note('E')).displayNotes()).toEqual(["E", "F#", "G#", "A", "B", "C#", "D#"])
+        expect(Scale.major(new Note('B')).displayNotes()).toEqual(["B", "C#", "D#", "E", "F#", "G#", "A#"])
+        expect(Scale.major(new Note('F#/Gb')).displayNotes()).toEqual(["F#", "G#", "A#", "B", "C#", "D#", "F"])
+        expect(Scale.major(new Note('C#/Db')).displayNotes()).toEqual(["Db", "Eb", "F", "Gb", "Ab", "Bb", "C"])
+        expect(Scale.major(new Note('G#/Ab')).displayNotes()).toEqual(["Ab", "Bb", "C", "Db", "Eb", "F", "G"])
+        expect(Scale.major(new Note('D#/Eb')).displayNotes()).toEqual(["Eb", "F", "G", "Ab", "Bb", "C", "D"])
+        expect(Scale.major(new Note('A#/Bb')).displayNotes()).toEqual(["Bb", "C", "D", "Eb", "F", "G", "A"])
+        expect(Scale.major(new Note('F')).displayNotes()).toEqual(["F", "G", "A", "Bb", "C", "D", "E"])
 
     })
 
     // TODO: Other scale types
     // TODO: Display differs depending on scale?
+
+    test('should generate a random scale', () => {
+        expect(Scale.getRandomScaleCustom()).toEqual(Scale.minor(Note.B))
+    })
+
+    test('should generate a random scale but limited by the received scale categories', () => {
+        const allowedScaleCategories = [ScaleCategory.Major]
+        expect(Scale.getRandomScaleCustom(allowedScaleCategories)).toEqual(Scale.major(Note.B))
+    })
+
+    test('should generate a random scale but limited by the received scale root notes', () => {
+        const allowedScaleCategories = [ScaleCategory.Major]
+        const allowedNotes = [new Note('C'), new Note('A')]
+        expect(Scale.getRandomScaleCustom(allowedScaleCategories, allowedNotes)).toEqual(Scale.major(Note.A))
+    })
 
 })

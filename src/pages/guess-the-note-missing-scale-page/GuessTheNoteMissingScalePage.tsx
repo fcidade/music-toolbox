@@ -14,7 +14,7 @@ export const GuessTheNoteMissingScalePage = () => {
                 </span>
             </aside>
             <hr />
-            {/* <GuessTheNoteMissingScaleGameComponent /> */}
+            <GuessTheNoteMissingScaleGameComponent />
             <hr/>
             <ScaleGeneratorComponent/>
 

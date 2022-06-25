@@ -5,6 +5,7 @@ import { GameState } from "@/games/common"
 import { ScaleCategory } from "@/lib/scale-category"
 import { Section } from "../common"
 import { GameConfiguration, GamePanel } from "./components"
+
 export const GuessTheNoteMissingScaleGameComponent = () => {
 
     const [game] = useState(new GuessTheNoteMissingScaleGame())
@@ -18,7 +19,8 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
         scale,
         notesDisplayed,
         guessedRight,
-        guessedWrong
+        guessedWrong,
+        hiddenNote
     } = gamePresentation
 
 
@@ -27,7 +29,7 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
     }, [])
 
     const handleOptionClick = (e) => {
-        const note = e.target.innerText as Note
+        const note = new Note(e.target.innerText)
         game.validateInput(note)
     }
 
@@ -63,6 +65,7 @@ export const GuessTheNoteMissingScaleGameComponent = () => {
     const avaliableRootNotes = Note.allNotes()
     const avaliableScaleCategories = ScaleCategory.allScaleCategories()
 
+    // TODO: Render nothing when no scale o scale type if selected
     return (
         <div>
             <Section title="Guess The Note Missing In The Scale">

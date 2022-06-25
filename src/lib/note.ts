@@ -4,7 +4,7 @@ export class Note {
     constructor(public note: string) { }
 
     getRelative(interval: Interval): Note {
-        const notes = Note.allNotes().map(({note}) => note)
+        const notes = Note.allNotes().map(({ note }) => note)
         const indexOfCurrentNote = notes.indexOf(this.note)
         const relativeNote = notes[(indexOfCurrentNote + interval) % notes.length]
         return new Note(relativeNote)
@@ -30,6 +30,10 @@ export class Note {
 
     splitAccidents(): string[] {
         return this.note.split('/')
+    }
+
+    isTheSameNoteAs({ note }: Note): boolean {
+        return this.note === note
     }
 }
 

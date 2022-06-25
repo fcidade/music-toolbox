@@ -35,8 +35,8 @@ export class GuessTheNoteMissingScaleGame {
     }
 
     validateInput(input: Note) {
-        const note = this.scale.getNote(this.indexOfTheNoteToBeHidden)
-        if (input === note) {
+        const { note } = this.scale.getNote(this.indexOfTheNoteToBeHidden)
+        if (input.note === note) {
             this.state = GameState.Success
             this.guessedRight++
         } else {
@@ -47,10 +47,11 @@ export class GuessTheNoteMissingScaleGame {
     }
 
     present(): GuessTheNoteMissingScaleGame.Presenter {
-        const notesDisplayed = this.scale.getNotesAsStrings()
+        const notesDisplayed = this.scale.displayNotes()
         const hiddenNote = new Note(notesDisplayed[this.indexOfTheNoteToBeHidden])
         notesDisplayed[this.indexOfTheNoteToBeHidden] = "_"
         const avaliableAnswerOptions = Note.allNotes()
+        
         return {
             state: this.state,
             avaliableAnswerOptions,

@@ -25,7 +25,7 @@ export class Scale {
 
     displayNotes(): string[] {
         const shouldBeSharps = [Note.C, Note.G, Note.D, Note.A, Note.E, Note.B, Note.Gb]
-        if (shouldBeSharps.includes(this.root)) {
+        if (shouldBeSharps.find(note => note.isTheSameNoteAs(this.root))) {
             return this.displayNotesWithSharps()
         }
         return this.displayNotesWithFlats()
@@ -43,15 +43,18 @@ export class Scale {
 
 export namespace Scale {
 
-    export const getRandomScaleCustom = (allowedScaleCategories: ScaleCategory[], allowedNotes: Note[]): Scale => {
+    // FIXME: Add unit tests to optimize
+    export const getRandomScaleCustom = (allowedScaleCategories: ScaleCategory[] = [], allowedNotes: Note[] = []): Scale => {
+        const allowedNotesIDs = allowedNotes.map(({ note }) => note)
         const notes = Note.allNotes()
-            .filter(note => allowedNotes ? allowedNotes.includes(note) : true)
+            .filter(({ note }) => !!allowedNotesIDs.length ? allowedNotesIDs.includes(note) : true)
+
         const scaleCategories = ScaleCategory.allScaleCategories()
-            .filter(category => allowedScaleCategories ? allowedScaleCategories.includes(category) : true)
+            .filter(category => !!allowedScaleCategories.length ? allowedScaleCategories.includes(category) : true)
 
         const randomRoot = oneOf(notes)
         const randomScaleCategory = oneOf(scaleCategories)
-        return new Scale(randomRoot, randomScaleCategory)
+        return new Scale(randomRoot || Note.C, randomScaleCategory)
     }
 
     export const major = (note: Note): Scale => {
@@ -77,6 +80,6 @@ export namespace Scale {
     export const melodicMinor = (note: Note): Scale => {
         return new Scale(note, ScaleCategory.MelodicMinor)
     }
-    
-    
+
+
 }
